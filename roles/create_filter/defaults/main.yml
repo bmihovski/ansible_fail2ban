@@ -1,0 +1,4 @@
+---
+# defaults file for roles/create_filter
+
+fail2ban_conf_path: /etc/fail2ban/filter.d

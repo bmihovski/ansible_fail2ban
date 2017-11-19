@@ -1,0 +1,12 @@
+---
+# tasks file for roles/check_file_content
+- name: Check filter file content
+  slurp:
+    src: '{{ file_to_check }}'
+  register: file_content
+
+- name: Assert filter content
+  assert:
+    that:
+      - "'{{ file_content_to_check }}' in file_content.content | b64decode"
+    msg: 'File content must be as the expected'

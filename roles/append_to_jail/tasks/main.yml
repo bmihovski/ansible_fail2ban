@@ -1,0 +1,21 @@
+---
+# tasks file for roles/append_to_jail
+
+- name: Append the new filter to {{ jail_conf_file }} and apply it
+  blockinfile:
+    block: '{{ jail_conf_rule_content }}'
+    insertafter: EOF
+    path: '{{ fail2ban_conf_path }}/{{ jail_conf_file }}'
+    marker: ''
+    backup: yes
+  notify:
+    - update_fail2ban
+  when: create
+
+- name: Check and assert {{ jail_conf_file }} content
+  include_role:
+    name: check_jail_file
+  vars:
+    jail_file_to_check: '{{ fail2ban_conf_path }}/{{ jail_conf_file }}'  
+    jail_content_to_check: jail_conf_rule_content
+  when: test_it

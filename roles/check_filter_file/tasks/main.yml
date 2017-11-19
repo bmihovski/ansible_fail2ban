@@ -1,0 +1,20 @@
+---
+# tasks file for roles/check_filter_file
+
+- name: Check filter file
+  stat:
+    path: '{{ filter_conf_file }}'  
+  register: filter_exists
+  
+- name: Assert filter file created
+  assert:
+    that:
+      - filter_exists.stat.exists
+    msg: 'File must be created'
+
+- name: Check and assert filter file content
+  include_role:
+    name: check_file_content
+  vars:
+    file_to_check: '{{ filter_conf_file }}'
+    file_content_to_check: '{{ content_to_check }}'

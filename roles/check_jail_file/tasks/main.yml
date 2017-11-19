@@ -1,0 +1,20 @@
+---
+# tasks file for roles/check_jail_file
+
+- name: Check and assert {{ jail_conf_file }} content
+  include_role:
+    name: check_file_content
+  vars:
+    file_to_check: '{{ fail2ban_conf_path }}/{{ jail_conf_file }}'  
+    file_content_to_check: "{{ lookup('template', 'jail.conf.j2', template_vars=dict(name=filter_name, log_file=log_file_to_check)) }}"
+    
+- name: Check applied {{ filter_name }} firewall rule
+  command: /sbin/iptables -L
+  register: applied_firewall_rule
+  
+- name: Assert applied {{ filter_name }} firewall rule
+  assert:
+    that: 
+      - "'{{ filter_name }}' in applied_firewall_rule.stdout"
+    msg: 'Firewall rule with name {{ filter_name }} must be created' 
+  
