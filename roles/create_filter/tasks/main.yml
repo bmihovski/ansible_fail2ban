@@ -1,0 +1,16 @@
+---
+# tasks file for roles/create_filter
+- name: Create filter file
+  template:
+    src: filter_template.conf.j2
+    dest: '{{ fail2ban_conf_path }}/{{ filter_conf }}'
+    validate: /usr/bin/fail2ban-regex '{{ log_file_to_check }}' %s
+  when: create
+
+- name: Check filter file
+  include_role:
+    name: check_filter_file 
+  vars:
+    filter_conf_file: '{{ fail2ban_conf_path }}/{{ filter_conf }}'
+    content_to_check: '{{ filter_regex }}'
+  when: test_it

@@ -1,0 +1,5 @@
+---
+# handlers file for roles/append_to_jail
+
+- name: update_fail2ban
+  command: /usr/bin/fail2ban-client reload

@@ -1,0 +1,7 @@
+
+[{{ name }}]
+enabled = true
+action = iptables-allports[name={{ filter_name }}, protocol=all]
+filter = {{ filter_name }}
+logpath = {{ log_file }}
+maxretry = 2
