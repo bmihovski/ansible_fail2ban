@@ -166,5 +166,15 @@
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/log/syslog
     - filter_name: postfix_anvil
+    - create: false
+    - test_it: true
+    
+- name: Apply new date parser for multics
+  hosts: server1
+  gather_facts: false
+  roles:
+    - fail2ban_regex_date
+  vars:
     - create: true
     - test_it: true
+...
