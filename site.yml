@@ -1,6 +1,15 @@
 ---
 # main playbook to call roles
 
+- name: Apply new date parser for multics
+  hosts: server1
+  gather_facts: false
+  roles:
+    - fail2ban_regex_date
+  vars:
+    - create: true
+    - test_it: true
+
 - name: Implement postfix fail2ban rule
   hosts: server1
   gather_facts: false
@@ -169,12 +178,51 @@
     - create: false
     - test_it: true
     
-- name: Apply new date parser for multics
+- name: Implement multics cache fail2ban rule
   hosts: server1
   gather_facts: false
   roles:
-    - fail2ban_regex_date
+    - create_filter
   vars:
+    - filter_conf: multics_cache.conf
+    - filter_regex: "\\[.*\\] cache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
     - create: true
+    - test_it: true
+    - log_file_to_check: /var/log/syslog
+    
+- name: Apply multics cache to jail conf
+  hosts: server1
+  gather_facts: false
+  roles:
+    - append_to_jail
+  vars:
+    - jail_conf_file: jail.conf
+    - log_file_to_check: /var/log/syslog
+    - filter_name: multics_cache
+    - create: false
+    - test_it: true
+    
+- name: Implement multics cache fail2ban rule
+  hosts: server1
+  gather_facts: false
+  roles:
+    - create_filter
+  vars:
+    - filter_conf: multics_cache.conf
+    - filter_regex: "\\[.*\\] cache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
+    - create: true
+    - test_it: true
+    - log_file_to_check: /var/log/syslog
+    
+- name: Apply multics cache to jail conf
+  hosts: server1
+  gather_facts: false
+  roles:
+    - append_to_jail
+  vars:
+    - jail_conf_file: jail.conf
+    - log_file_to_check: /var/log/syslog
+    - filter_name: multics_cache
+    - create: false
     - test_it: true
 ...
