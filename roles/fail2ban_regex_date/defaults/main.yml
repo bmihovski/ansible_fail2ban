@@ -1,4 +1,4 @@
 ---
 # defaults file for roles/fail2ban_regex_date
 
-fail2ban_date_checker_path: /usr/share/fail2ban/server/datedetector.py
+fail2ban_date_checker_path: /usr/lib/python3/dist-packages/fail2ban/server/datedetector.py

@@ -7,222 +7,460 @@
   roles:
     - fail2ban_regex_date
   vars:
-    - create: true
-    - test_it: true
+    - create: false
+    - test_it: false
 
-- name: Implement postfix fail2ban rule
+- name: Implement sasl fail2ban rule
   hosts: server1
   gather_facts: false
   roles:
     - create_filter
   vars:
-    - filter_conf: postfix_unknown.conf
-    - filter_regex: "^.* postfix/smtpd\\[.*\\]: connect from unknown\\[<HOST>\\]$"
-    - create: false
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply postfix fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_unknown
-    - create: false
-    - test_it: true
+    - filter_conf: sasl.conf
+    - filter_regex: "(?i): warning: [-._\\w]+\\[<HOST>\\]: SASL (?:LOGIN|PLAIN|(?:CRAM|DIGEST)-MD5) authentication failed(: [ A-Za-z0-9+/]*={0,2})?\\s*$"
+    - create: true
+    - test_it: false
+    - log_file_to_check: /var/log/mail.log
 
-- name: Implement postfix sas login fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: postfix_sas.conf
-    - filter_regex: ".*\\[<HOST>\\]: SASL LOGIN authentication failed: generic failure$"
-    - create: false
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply postfix sas login fail2ban rule to jail conf
+- name: Apply sasl fail2ban rule to jail conf
   hosts: server1
   gather_facts: false
   roles:
     - append_to_jail
   vars:
     - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_sas
-    - create: false
-    - test_it: true
-     
-- name: Implement postfix RCPT from unknown fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: postfix_rcpt.conf
-    - filter_regex: ".* postfix/smtpd\\[.*\\]: NOQUEUE: reject: RCPT from unknown\\[<HOST>\\]"
-    - create: false
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply postfix RCPT from unknown fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_rcpt
-    - create: false
-    - test_it: true
-  
-- name: Implement named query (cache) denied fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: named_cache.conf
-    - filter_regex: "named\\[.*\\]: client <HOST>#.* \\(.*\\): query \\(cache\\)"
-    - create: false
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply named query (cache) denied fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: named_cache
-    - create: false
-    - test_it: true
-    
-- name: Implement pop3d LOGIN FAILED fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: pop3d_login.conf
-    - filter_regex: "pop3d: LOGIN FAILED, .*, ip=\\[::ffff:<HOST>\\]$"
-    - create: false
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply pop3d LOGIN FAILED fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: pop3d_login
-    - create: false
-    - test_it: true
-    
-- name: Implement proftpd - FTP session closed fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: proftpd_closed.conf
-    - filter_regex: "proftpd\\[.*\\]: .* \\(.*\\[<HOST>\\]\\) \\- FTP session closed\\.$"
-    - create: false
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply proftpd - FTP session closed fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: proftpd_closed
-    - create: false
-    - test_it: true
- 
-- name: Implement postfix anvil statistics max connection count fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: postfix_anvil.conf
-    - filter_regex: "postfix/anvil\\[.*\\]: statistics: max connection count .* for \\(smtp:<HOST>\\) at.*"
+    - log_file_to_check: /var/log/mail.log
+    - filter_name: sasl
     - create: true
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply postfix anvil statistics max connection count fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_anvil
-    - create: false
-    - test_it: true
-    
-- name: Implement multics cache fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: multics_cache.conf
-    - filter_regex: "\\[.*\\] cache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
-    - create: true
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply multics cache to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: multics_cache
-    - create: false
-    - test_it: true
-    
-- name: Implement multics cache fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: multics_cache.conf
-    - filter_regex: "\\[.*\\] cache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
-    - create: true
-    - test_it: true
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply multics cache to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: multics_cache
-    - create: false
-    - test_it: true
+    - test_it: false  
+#
+#- name: Implement courierpop3 fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: courierpop3.conf
+#    - filter_regex: "pop3d: LOGIN FAILED.*ip=\\[.*:<HOST>\\]"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/mail.log
+#
+#- name: Apply courierpop3 fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/mail.log
+#    - filter_name: courierpop3
+#    - create: true
+#    - test_it: false  
+#
+#- name: Implement courierpop3s fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: courierpop3s.conf
+#    - filter_regex: "pop3d-ssl: LOGIN FAILED.*ip=\\[.*:\\]"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/mail.log
+#
+#- name: Apply courierpop3s fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/mail.log
+#    - filter_name: courierpop3s
+#    - create: true
+#    - test_it: false  
+#
+#- name: Implement courierimap fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: courierimap.conf
+#    - filter_regex: "imapd: LOGIN FAILED.*ip=\\[.*:<HOST>\\]"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/mail.log
+#
+#- name: Apply courierimap fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/mail.log
+#    - filter_name: courierimap
+#    - create: true
+#    - test_it: false  
+#
+#- name: Implement courierimaps fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: courierimaps.conf
+#    - filter_regex: "imapd-ssl: LOGIN FAILED.*ip=\\[.*:\\]"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/mail.log
+#
+#- name: Apply courierimaps fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/mail.log
+#    - filter_name: courierimaps
+#    - create: true
+#    - test_it: false    
+#
+#- name: Implement wp auth fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: wp_auth.conf
+#    - filter_regex: "^<HOST> .* \"POST /wp-login.php"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
+#
+#- name: Apply wp auth rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
+#    - filter_name: wp_auth
+#    - create: true
+#    - test_it: false
+#
+#- name: Implement wp auth rpc fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: wp_auth_rpc.conf
+#    - filter_regex: "^<HOST> .* \"POST /xmlrpc.php"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
+#
+#- name: Apply wp auth rpc rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
+#    - filter_name: wp_auth_rpc
+#    - create: true
+#    - test_it: false
+#
+#
+#- name: Implement postfix unknown fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: postfix_unknown.conf
+#    - filter_regex: "^.* postfix/smtpd\\[.*\\]: connect from unknown\\[<HOST>\\]$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply postfix fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: postfix_unknown
+#    - create: true
+#    - test_it: false
+#
+#- name: Implement postfix sas login fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: postfix_sas.conf
+#    - filter_regex: ".*\\[<HOST>\\]: SASL LOGIN authentication failed: generic failure$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply postfix sas login fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: postfix_sas
+#    - create: true
+#    - test_it: false
+#     
+#- name: Implement postfix RCPT from unknown fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: postfix_rcpt.conf
+#    - filter_regex: ".* postfix/smtpd\\[.*\\]: NOQUEUE: reject: RCPT from unknown\\[<HOST>\\]"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply postfix RCPT from unknown fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: postfix_rcpt
+#    - create: true
+#    - test_it: false
+#  
+#- name: Implement named query (cache) denied fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: named_cache.conf
+#    - filter_regex: "named\\[.*\\]: client <HOST>#.* \\(.*\\): query \\(cache\\)"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply named query (cache) denied fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: named_cache
+#    - create: true
+#    - test_it: false
+#    
+#- name: Implement pop3d LOGIN FAILED fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: pop3d_login.conf
+#    - filter_regex: "pop3d: LOGIN FAILED, .*, ip=\\[::ffff:<HOST>\\]$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply pop3d LOGIN FAILED fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: pop3d_login
+#    - create: true
+#    - test_it: false
+#    
+#- name: Implement proftpd - FTP session closed fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: proftpd_closed.conf
+#    - filter_regex: "proftpd\\[.*\\]: .* \\(.*\\[<HOST>\\]\\) \\- FTP session closed\\.$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply proftpd - FTP session closed fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: proftpd_closed
+#    - create: true
+#    - test_it: false
+# 
+#- name: Implement postfix anvil statistics max connection count fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: postfix_anvil.conf
+#    - filter_regex: "postfix/anvil\\[.*\\]: statistics: max connection count .* for \\(smtp:<HOST>\\) at.*"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply postfix anvil statistics max connection count fail2ban rule to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: postfix_anvil
+#    - create: true
+#    - test_it: false
+#    
+#- name: Implement multics cache fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: multics_cache.conf
+#    - filter_regex: "\\[.*\\] cache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply multics cache to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: multics_cache
+#    - create: true
+#    - test_it: false
+#    
+#- name: Implement multics cccam fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: multics_cccam.conf
+#    - filter_regex: "\\[.*\\] .* wrong sha1 hash from client! \\(<HOST>.*$
+#            \\[.*\\] .* connection refused for client .* \\(<HOST>\\), client disabled$
+#            \\[.*\\] .* Unknown Client .* \\(<HOST>.*$
+#            \\[.*\\] CCcam2: Unknown Client '.*' \\(<HOST>.*$
+#            \\[.*\\] .* Aborted connection from Client '.*' \\(<HOST>\\), ip refused
+#            \\[.*\\] .* Client .* \\(<HOST>\\) already connected with different ip$
+#            \\[.*\\] .* Failed to connect new client\\(<HOST>.*$
+#            \\[.*\\] .* login failed from client\\(<HOST>.*$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply multics cccam to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: multics_cccam
+#    - create: true
+#    - test_it: false
+#
+#- name: Implement multics mgcamd fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: multics_mgcamd.conf
+#    - filter_regex: "\\[.*\\] mgcamd: New Connection \\(<HOST>\\) closed, ip blocked$
+#                     \\[.*\\] mgcamd: \\(<HOST>\\) new connection closed, wrong des key$
+#                     \\[.*\\] mgcamd: \\(<HOST>\\) new connection closed, receive timeout$
+#                     \\[.*\\] newcamd: wrong username length \\(<HOST>.*$
+#                     \\[.*\\] mgcamd: connection refused for client '.*' \\(<HOST>\\), client disabled$
+#                     \\[.*\\] mgcamd: unknown user .* \\(<HOST>.*$
+#                     \\[.*\\] mgcamd: user already connected .* \\(<HOST>.*$
+#                     \\[.*\\] mgcamd: client .* wrong password \\(<HOST>.*$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply multics mgcamd to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: multics_mgcamd
+#    - create: true
+#    - test_it: false
+#    
+#- name: Implement multics newcamd fail2ban rule
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - create_filter
+#  vars:
+#    - filter_conf: multics_newcamd.conf
+#    - filter_regex: "\\[.*\\] .* \\(<HOST>\\) new connection closed, wrong des key$
+#                     \\[.*\\] .* \\(<HOST>\\) new connection closed, receive timeout$
+#                     \\[.*\\] .* \\(<HOST>\\) new connection closed, wrong username length$
+#                     \\[.*\\] .* \\(<HOST>\\) new connection closed, unknown user '.*'$
+#                     \\[.*\\] .* user already connected .* \\(<HOST>.*$
+#                     \\[.*\\] .* client .* wrong password \\(<HOST>.*$
+#                     \\[.*\\] .* unknown user .* \\(<HOST>.*$
+#                     \\[.*\\] .* unknown user '.*' \\(<HOST>.*$"
+#    - create: true
+#    - test_it: false
+#    - log_file_to_check: /var/log/syslog
+#    
+#- name: Apply multics cache to jail conf
+#  hosts: server1
+#  gather_facts: false
+#  roles:
+#    - append_to_jail
+#  vars:
+#    - jail_conf_file: jail.conf
+#    - log_file_to_check: /var/log/syslog
+#    - filter_name: multics_newcamd
+#    - create: true
+#    - test_it: false
 ...
