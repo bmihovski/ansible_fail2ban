@@ -1,0 +1,27 @@
+---
+# tasks file for roles/fail2ban_regex_date
+- name: Append the new regex to {{ fail2ban_date_checker_path }} and apply it
+  blockinfile:
+    block: |6+
+                      #multics
+                      template = DateStrptime()
+                      template.setName("Hour:Minute:Second[.Millisecond]")
+                      template.setRegex("\d{2}:\d{2}:\d{2}")
+                      template.setPattern("%H:%M:%S")
+                      self.__templates.append(template)
+    insertbefore: ' asctime with subsecond$'
+    path: '{{ fail2ban_date_checker_path }}'
+    marker: '            '
+    backup: yes
+  notify:
+    - restart_fail2ban
+  when: create
+
+- name: Check and assert {{ fail2ban_date_checker_path }} content
+  include_role:
+    name: check_file_content
+  vars:
+    file_to_check: '{{ fail2ban_date_checker_path }}'
+    file_content_to_check: 'template.setRegex("\d{2}:\d{2}:\d{2}")'
+  when: test_it
+...

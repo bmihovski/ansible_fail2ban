@@ -1,0 +1,7 @@
+---
+# handlers file for roles/fail2ban_regex_date
+
+- name: restart_fail2ban
+  service:
+    name: fail2ban
+    state: restarted
