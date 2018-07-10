@@ -4,7 +4,7 @@
   blockinfile:
     block: |6+
                       #multics
-                      self.appendTemplate("\d{2}:\d{2}:\d{2}")
+                      self.appendTemplate("%H:%M:%S")
     insertbefore: ' asctime with optional day'
     path: '{{ fail2ban_date_checker_path }}'
     marker: '            '
