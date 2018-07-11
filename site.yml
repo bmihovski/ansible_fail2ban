@@ -760,7 +760,7 @@
   roles:
     - create_filter
   vars:
-    - filter_conf: multics_camd35_clnt_disabled.conf
+    - filter_conf: multics_camd_clnt_disabled.conf
     - filter_regex: "\\[\\]%(__prefix_line)scamd35: connection refused for client '.*' \\(<HOST>\\), client disabled$"
     - create: true
     - test_it: false
@@ -774,7 +774,7 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/tmp/multics.log
-    - filter_name: multics_camd35_clnt_disabled
+    - filter_name: multics_camd_clnt_disabled
     - create: true
     - test_it: false
     
@@ -784,7 +784,7 @@
   roles:
     - create_filter
   vars:
-    - filter_conf: multics_cs378x_clnt_disabled.conf
+    - filter_conf: multics_csx_clnt_disabled.conf
     - filter_regex: "\\[\\]%(__prefix_line)scs378x: connection refused for client '.*' \\(<HOST>\\), client disabled$"
     - create: true
     - test_it: false
@@ -798,7 +798,7 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/tmp/multics.log
-    - filter_name: multics_cs378x_clnt_disabled
+    - filter_name: multics_csx_clnt_disabled
     - create: true
     - test_it: false
     
@@ -808,7 +808,7 @@
   roles:
     - create_filter
   vars:
-    - filter_conf: multics_cs378x_ip_blocked.conf
+    - filter_conf: multics_csx_ip_blocked.conf
     - filter_regex: "\\[\\]%(__prefix_line)scs378x: New Connection \\(<HOST>\\) closed, ip blocked$"
     - create: true
     - test_it: false
@@ -822,7 +822,7 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/tmp/multics.log
-    - filter_name: multics_cs378x_ip_blocked
+    - filter_name: multics_csx_ip_blocked
     - create: true
     - test_it: false
 ...
