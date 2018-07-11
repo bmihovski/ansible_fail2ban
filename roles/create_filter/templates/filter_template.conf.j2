@@ -5,13 +5,18 @@
 # $Revision: 510 $
 #
 
+[INCLUDES]
+# Read syslog common prefixes
+before = common.conf
+
+
 [Definition]
 
 # Option:  failregex
 # Notes.:  regex to match the password failures messages in the logfile. The
 #          host must be matched by a group named "host". The tag "<HOST>" can
 #          be used for standard IP/hostname matching and is only an alias for
-#          (?:::f{4,6}:)?(?P<host>\S+)
+#          (?:::f{4,6}:)?(?P<host>[\w\-.^_]+)
 # Values:  TEXT
 #
 failregex = {{ filter_regex }}
@@ -21,3 +26,10 @@ failregex = {{ filter_regex }}
 # Values:  TEXT
 #
 ignoreregex =
+
+
+# Fail2Ban filter for Nagios Remote Plugin Executor (nrpe2)
+# Detecting unauthorized access to the nrpe2 daemon
+# typically logged in /var/log/messages syslog
+#
+

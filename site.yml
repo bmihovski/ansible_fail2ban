@@ -10,18 +10,6 @@
     - create: false
     - test_it: false
 
-- name: Implement sasl fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: sasl.conf
-    - filter_regex: "(?i): warning: [-._\\w]+\\[<HOST>\\]: SASL (?:LOGIN|PLAIN|(?:CRAM|DIGEST)-MD5) authentication failed(: [ A-Za-z0-9+/]*={0,2})?\\s*$"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/mail.log
-
 - name: Apply sasl fail2ban rule to jail conf
   hosts: server1
   gather_facts: false
@@ -30,21 +18,9 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/log/mail.log
-    - filter_name: sasl
+    - filter_name: postfix-sasl
     - create: false
     - test_it: false  
-
-- name: Implement courierpop3 fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: courierpop3.conf
-    - filter_regex: "pop3d: LOGIN FAILED.*ip=\\[.*:<HOST>\\]"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/mail.log
 
 - name: Apply courierpop3 fail2ban rule to jail conf
   hosts: server1
@@ -54,81 +30,9 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/log/mail.log
-    - filter_name: courierpop3
+    - filter_name: courier-auth
     - create: false
     - test_it: false  
-
-- name: Implement courierpop3s fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: courierpop3s.conf
-    - filter_regex: "pop3d-ssl: LOGIN FAILED.*ip=\\[.*:<HOST>\\]"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/mail.log
-
-- name: Apply courierpop3s fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/mail.log
-    - filter_name: courierpop3s
-    - create: false
-    - test_it: false  
-
-- name: Implement courierimap fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: courierimap.conf
-    - filter_regex: "imapd: LOGIN FAILED.*ip=\\[.*:<HOST>\\]"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/mail.log
-
-- name: Apply courierimap fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/mail.log
-    - filter_name: courierimap
-    - create: false
-    - test_it: false  
-
-- name: Implement courierimaps fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: courierimaps.conf
-    - filter_regex: "imapd-ssl: LOGIN FAILED.*ip=\\[.*:<HOST>\\]"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/mail.log
-
-- name: Apply courierimaps fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/mail.log
-    - filter_name: courierimaps
-    - create: false
-    - test_it: false    
 
 - name: Implement wp auth fail2ban rule
   hosts: server1
@@ -137,7 +41,7 @@
     - create_filter
   vars:
     - filter_conf: wp_auth.conf
-    - filter_regex: "^<HOST> .* \"POST /wp-login.php"
+    - filter_regex: "^<HOST>  - - \\[\\]%(__prefix_line)s\"POST /wp-login.php"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
@@ -161,7 +65,7 @@
     - create_filter
   vars:
     - filter_conf: wp_auth_rpc.conf
-    - filter_regex: "^<HOST> .* \"POST /xmlrpc.php"
+    - filter_regex: "^<HOST>  - - \\[\\]%(__prefix_line)s\"POST /xmlrpc.php"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
@@ -186,7 +90,7 @@
     - create_filter
   vars:
     - filter_conf: postfix_unknown.conf
-    - filter_regex: "^.* postfix/smtpd\\[.*\\]: connect from unknown\\[<HOST>\\]$"
+    - filter_regex: "^.* postfix/smtpd\\[\\]%(__prefix_line)s: connect from unknown\\[<HOST>\\]$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/syslog
@@ -202,42 +106,6 @@
     - filter_name: postfix_unknown
     - create: false
     - test_it: false
-
-- name: Implement postfix sas login fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: postfix_sas.conf
-    - filter_regex: ".*\\[<HOST>\\]: SASL LOGIN authentication failed: generic failure$"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply postfix sas login fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_sas
-    - create: false
-    - test_it: false
-     
-- name: Implement postfix RCPT from unknown fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: postfix_rcpt.conf
-    - filter_regex: ".* postfix/smtpd\\[.*\\]: NOQUEUE: reject: RCPT from unknown\\[<HOST>\\]"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/syslog
     
 - name: Apply postfix RCPT from unknown fail2ban rule to jail conf
   hosts: server1
@@ -247,21 +115,9 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_rcpt
+    - filter_name: postfix
     - create: false
     - test_it: false
-  
-- name: Implement named query (cache) denied fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: named_cache.conf
-    - filter_regex: "named\\[.*\\]: client <HOST>#.* \\(.*\\): query \\(cache\\)"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/syslog
     
 - name: Apply named query (cache) denied fail2ban rule to jail conf
   hosts: server1
@@ -271,34 +127,10 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/log/syslog
-    - filter_name: named_cache
+    - filter_name: named-refused
     - create: false
     - test_it: false
-    
-- name: Implement pop3d LOGIN FAILED fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: pop3d_login.conf
-    - filter_regex: "pop3d: LOGIN FAILED, .*, ip=\\[::ffff:<HOST>\\]$"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply pop3d LOGIN FAILED fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: pop3d_login
-    - create: false
-    - test_it: false
-    
+
 - name: Implement proftpd - FTP session closed fail2ban rule
   hosts: server1
   gather_facts: false
@@ -306,7 +138,7 @@
     - create_filter
   vars:
     - filter_conf: proftpd_closed.conf
-    - filter_regex: "proftpd\\[.*\\]: .* \\(.*\\[<HOST>\\]\\) \\- FTP session closed\\.$"
+    - filter_regex: "proftpd\\[\\]%(__prefix_line)s: .* \\(.*\\[<HOST>\\]\\) - FTP session closed.$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/syslog
@@ -330,7 +162,7 @@
     - create_filter
   vars:
     - filter_conf: postfix_anvil.conf
-    - filter_regex: "postfix/anvil\\[.*\\]: statistics: max connection count .* for \\(smtp:<HOST>\\) at.*"
+    - filter_regex: "postfix/anvil\\[\\]%(__prefix_line)s: statistics: max connection count .* for \\(smtp:<HOST>\\) at.*"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/syslog
@@ -354,7 +186,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cache.conf
-    - filter_regex: "\\[.*\\] cache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
+    - filter_regex: "\\[\\]%(__prefix_line)scache: Alert! unknown peer \\(<HOST>\\:.*\\)$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -378,7 +210,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_sha1.conf
-    - filter_regex: "\\[.*\\] .* wrong sha1 hash from client! \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)swrong sha1 hash from client! \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -402,7 +234,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_con_ref.conf
-    - filter_regex: "\\[.*\\] .* connection refused for client .* \\(<HOST>\\), client disabled$"
+    - filter_regex: "\\[\\]%(__prefix_line)sconnection refused for client .* \\(<HOST>\\), client disabled$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -426,7 +258,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_unknown_client.conf
-    - filter_regex: "\\[.*\\] .* Unknown Client .* \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)sUnknown Client .* \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -450,7 +282,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam2_unknown_client.conf
-    - filter_regex: "\\[.*\\] CCcam2: Unknown Client '.*' \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)sCCcam2: Unknown Client '.*' \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -474,7 +306,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_aborted_con.conf
-    - filter_regex: "\\[.*\\] .* Aborted connection from Client '.*' \\(<HOST>\\), ip refused"
+    - filter_regex: "\\[\\]%(__prefix_line)sAborted connection from Client '.*' \\(<HOST>\\), ip refused"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -498,7 +330,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_already_con.conf
-    - filter_regex: "\\[.*\\] .* Client .* \\(<HOST>\\) already connected with different ip$"
+    - filter_regex: "\\[\\]%(__prefix_line)sClient .* \\(<HOST>\\) already connected with different ip$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -522,7 +354,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_failed_con.conf
-    - filter_regex: "\\[.*\\] .* Failed to connect new client\\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)sFailed to connect new client\\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -546,7 +378,7 @@
     - create_filter
   vars:
     - filter_conf: multics_cccam_login_failed.conf
-    - filter_regex: "\\[.*\\] .* login failed from client\\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)slogin failed from client\\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -570,7 +402,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_new_con.conf
-    - filter_regex: "\\[.*\\] mgcamd: New Connection \\(<HOST>\\) closed, ip blocked$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: New Connection \\(<HOST>\\) closed, ip blocked$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -594,7 +426,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_des_key.conf
-    - filter_regex: "\\[.*\\] mgcamd: \\(<HOST>\\) new connection closed, wrong des key$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: \\(<HOST>\\) new connection closed, wrong des key$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -618,7 +450,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_new_con_closed.conf
-    - filter_regex: "\\[.*\\] mgcamd: \\(<HOST>\\) new connection closed, receive timeout$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: \\(<HOST>\\) new connection closed, receive timeout$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -642,7 +474,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_wrong_user.conf
-    - filter_regex: "\\[.*\\] newcamd: wrong username length \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)snewcamd: wrong username length \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -666,7 +498,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_con_refused.conf
-    - filter_regex: "\\[.*\\] mgcamd: connection refused for client '.*' \\(<HOST>\\), client disabled$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: connection refused for client '.*' \\(<HOST>\\), client disabled$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -690,7 +522,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_unkn_user.conf
-    - filter_regex: "\\[.*\\] mgcamd: unknown user .* \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: unknown user .* \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -714,7 +546,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_user_already_con.conf
-    - filter_regex: "\\[.*\\] mgcamd: user already connected .* \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: user already connected .* \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -738,7 +570,7 @@
     - create_filter
   vars:
     - filter_conf: multics_mgcamd_wrong_pass.conf
-    - filter_regex: "\\[.*\\] mgcamd: client .* wrong password \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)smgcamd: client .* wrong password \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -762,7 +594,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_wrong_des.conf
-    - filter_regex: "\\[.*\\] .* \\(<HOST>\\) new connection closed, wrong des key$"
+    - filter_regex: "\\[\\]%(__prefix_line)s\\(<HOST>\\) new connection closed, wrong des key$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -786,7 +618,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_new_con_clos_timeout.conf
-    - filter_regex: "\\[.*\\] .* \\(<HOST>\\) new connection closed, receive timeout$"
+    - filter_regex: "\\[\\]%(__prefix_line)s\\(<HOST>\\) new connection closed, receive timeout$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -810,7 +642,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_new_con_clos_user.conf
-    - filter_regex: "\\[.*\\] .* \\(<HOST>\\) new connection closed, wrong username length$"
+    - filter_regex: "\\[\\]%(__prefix_line)s\\(<HOST>\\) new connection closed, wrong username length$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -834,7 +666,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_new_con_unkn_user.conf
-    - filter_regex: "\\[.*\\] .* \\(<HOST>\\) new connection closed, unknown user '.*'$"
+    - filter_regex: "\\[\\]%(__prefix_line)s\\(<HOST>\\) new connection closed, unknown user '.*'$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -858,7 +690,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_already_con.conf
-    - filter_regex: "\\[.*\\] .* user already connected .* \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)suser already connected .* \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -882,7 +714,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_wrong_pass.conf
-    - filter_regex: "\\[.*\\] .* client .* wrong password \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)sclient .* wrong password \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
@@ -905,7 +737,7 @@
     - create_filter
   vars:
     - filter_conf: multics_newcamd_unkn_user.conf
-    - filter_regex: "\\[.*\\] .* unknown user .* \\(<HOST>.*$"
+    - filter_regex: "\\[\\]%(__prefix_line)sunknown user .* \\(<HOST>.*$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/tmp/multics.log
