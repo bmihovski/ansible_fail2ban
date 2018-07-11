@@ -9,12 +9,12 @@
     file_content_to_check: "{{ lookup('template', 'jail.conf.j2', template_vars=dict(name=filter_name, log_file=log_file_to_check)) }}"
     
 - name: Check applied {{ filter_name }} firewall rule
-  command: /sbin/iptables -L
+  command: /sbin/iptables -L -n
   register: applied_firewall_rule
   
 - name: Assert applied {{ filter_name }} firewall rule
   assert:
     that: 
-      - "'{{ filter_name }}' in applied_firewall_rule.stdout"
+      - "'f2b-{{ filter_name }}' in applied_firewall_rule.stdout"
     msg: 'Firewall rule with name {{ filter_name }} must be created' 
   

@@ -4,7 +4,7 @@
   template:
     src: filter_template.conf.j2
     dest: '{{ fail2ban_conf_path }}/{{ filter_conf }}'
-    validate: /usr/bin/fail2ban-regex '{{ log_file_to_check }}' %s
+#    validate: /usr/bin/fail2ban-regex '{{ log_file_to_check }}' %s
   when: create
 
 - name: Check filter file
