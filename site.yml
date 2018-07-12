@@ -90,7 +90,7 @@
     - create_filter
   vars:
     - filter_conf: postfix_unknown.conf
-    - filter_regex: "^.* postfix/smtpd\\[\\]%(__prefix_line)s: connect from unknown\\[<HOST>\\]$"
+    - filter_regex: "^%(__prefix_line)s: connect from unknown\\[<HOST>\\]$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/syslog
@@ -138,7 +138,7 @@
     - create_filter
   vars:
     - filter_conf: proftpd_closed.conf
-    - filter_regex: "proftpd\\[\\]%(__prefix_line)s: .* \\(.*\\[<HOST>\\]\\) - FTP session closed.$"
+    - filter_regex: "^%(__prefix_line)s: .* \\(.*\\[<HOST>\\]\\) - FTP session closed.$"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/syslog
@@ -162,7 +162,7 @@
     - create_filter
   vars:
     - filter_conf: postfix_anvil.conf
-    - filter_regex: "postfix/anvil\\[\\]%(__prefix_line)s: statistics: max connection count .* for \\(smtp:<HOST>\\) at.*"
+    - filter_regex: "^%(__prefix_line)s: statistics: max connection count .* for \\(submission:<HOST>\\) at.*"
     - create: false
     - test_it: false
     - log_file_to_check: /var/log/syslog
@@ -665,7 +665,7 @@
   roles:
     - create_filter
   vars:
-    - filter_conf: multics_newcamd_unk_user.conf
+    - filter_conf: multics_newcamd_con_ukn.conf
     - filter_regex: "\\[\\]%(__prefix_line)s\\(<HOST>\\) new connection closed, unknown user '.*'$"
     - create: true
     - test_it: false
@@ -679,7 +679,7 @@
   vars:
     - jail_conf_file: jail.conf
     - log_file_to_check: /var/tmp/multics.log
-    - filter_name: multics_newcamd_unk_user
+    - filter_name: multics_newcamd_con_ukn
     - create: true
     - test_it: false
     
