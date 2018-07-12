@@ -4,7 +4,7 @@
   blockinfile:
     block: |6+
                       #multics
-                      self.appendTemplate("%H:%M:%S")
+                      self.appendTemplate("%H:%M:%S\.%f")
     insertbefore: ' asctime with optional day'
     path: '{{ fail2ban_date_checker_path }}'
     marker: '            '
@@ -18,6 +18,6 @@
     name: check_file_content
   vars:
     file_to_check: '{{ fail2ban_date_checker_path }}'
-    file_content_to_check: 'self.appendTemplate("%H:%M:%S")'
+    file_content_to_check: 'self.appendTemplate("%H:%M:%S\.%f")'
   when: test_it
 ...
