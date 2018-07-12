@@ -1,7 +1,7 @@
 Role Name
 =========
 
-Apply and test fail2ban date regex for multics to /usr/share/fail2ban/server/datedetector.py
+Apply and test fail2ban date regex for multics to /usr/share/fail2ban/server/datedetector.py and banaction at /etc/fail2ban/action.d/route.conf
 
 Requirements
 ------------
@@ -17,6 +17,7 @@ test_it: Bool ( test the filter )
 defaults/main.yml
 
 fail2ban_date_checker_path: ( path to file2ban conf dir )
+fai2ban_route_banaction_path: ( path to fail2ban route banaction conf )
 
 handlers/main.yml
 update fail2ban: - ( load the new regex to fail2ban )

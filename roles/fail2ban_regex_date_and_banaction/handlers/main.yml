@@ -1,5 +1,5 @@
 ---
-# handlers file for roles/fail2ban_regex_date
+# handlers file for roles/fail2ban_regex_date_and_banaction
 
 - name: restart_fail2ban
   service:

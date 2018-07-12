@@ -1,0 +1,5 @@
+---
+# defaults file for roles/fail2ban_regex_date_and_banaction
+
+fail2ban_date_checker_path: /usr/lib/python3/dist-packages/fail2ban/server/datedetector.py
+fai2ban_route_banaction_path: /etc/fail2ban/action.d/route.conf

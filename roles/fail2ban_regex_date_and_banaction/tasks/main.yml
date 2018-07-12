@@ -1,0 +1,33 @@
+---
+# tasks file for roles/fail2ban_regex_date_and_banaction
+- name: Append the new regex to {{ fail2ban_date_checker_path }} and apply it
+  blockinfile:
+    block: |6+
+                      #multics
+                      self.appendTemplate("%H:%M:%S.%f")
+    insertbefore: ' asctime with optional day'
+    path: '{{ fail2ban_date_checker_path }}'
+    marker: '            '
+    backup: yes
+  notify:
+    - restart_fail2ban
+  when: create
+
+- name: Change banaction route blocktype 
+  replace:
+    path: '{{ fai2ban_route_banaction_path }}'
+    regexp: '^blocktype = unreachable$'
+    replace: 'blocktype = blackhole'
+  when: create
+
+- name: Check and assert date_checker and banaction content
+  include_role:
+    name: check_file_content
+  vars:
+    file_to_check: '{{ item[0] }}'
+    file_content_to_check: '{{ item[1] }}'
+  with_together:
+    - [ '{{ fail2ban_date_checker_path }}',  '{{ fai2ban_route_banaction_path }}' ]
+    - [ 'self.appendTemplate("%H:%M:%S.%f")', 'blocktype = blackhole' ]
+  when: test_it
+...
