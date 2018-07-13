@@ -10,18 +10,6 @@
     - create: false
     - test_it: true
 
-- name: Apply sasl fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/mail.log
-    - filter_name: postfix-sasl
-    - create: false
-    - test_it: false  
-
 - name: Apply courierpop3 fail2ban rule to jail conf
   hosts: server1
   gather_facts: false
@@ -154,30 +142,6 @@
     - filter_name: proftpd_closed
     - create: false
     - test_it: false
- 
-- name: Implement postfix anvil statistics max connection count fail2ban rule
-  hosts: server1
-  gather_facts: false
-  roles:
-    - create_filter
-  vars:
-    - filter_conf: postfix_anvil.conf
-    - filter_regex: "^.*: statistics: max connection count .* for \\(submission:<HOST>\\) at.*"
-    - create: false
-    - test_it: false
-    - log_file_to_check: /var/log/syslog
-    
-- name: Apply postfix anvil statistics max connection count fail2ban rule to jail conf
-  hosts: server1
-  gather_facts: false
-  roles:
-    - append_to_jail
-  vars:
-    - jail_conf_file: jail.conf
-    - log_file_to_check: /var/log/syslog
-    - filter_name: postfix_anvil
-    - create: false
-    - test_it: false
     
 - name: Implement named DNS format error fail2ban rule
   hosts: server1
@@ -202,7 +166,7 @@
     - filter_name: named_format_error
     - create: false
     - test_it: false
-        
+   
 - name: Implement multics cache fail2ban rule
   hosts: server1
   gather_facts: false
