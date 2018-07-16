@@ -8,7 +8,19 @@
     - fail2ban_regex_date_and_banaction
   vars:
     - create: false
-    - test_it: true
+    - test_it: false
+
+- name: Apply sasl fail2ban rule to jail conf
+  hosts: server1
+  gather_facts: false
+  roles:
+    - append_to_jail
+  vars:
+    - jail_conf_file: jail.conf
+    - log_file_to_check: /var/log/mail.log
+    - filter_name: postfix-sasl
+    - create: false
+    - test_it: false  
 
 - name: Apply courierpop3 fail2ban rule to jail conf
   hosts: server1
