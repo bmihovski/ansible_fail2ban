@@ -825,4 +825,29 @@
     - filter_name: multics_cs378x_ip_block
     - create: false
     - test_it: false
+    
+- name: Implement wp cron fail2ban rule
+  hosts: server1
+  gather_facts: false
+  roles:
+    - create_filter
+  vars:
+    - filter_conf: wp_cron.conf
+    - filter_regex: "^<HOST>.*\"POST /wp-cron.php?doing_wp_cron="
+    - create: false
+    - test_it: false
+    - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
+
+- name: Apply wp cron rule to jail conf
+  hosts: server1
+  gather_facts: false
+  roles:
+    - append_to_jail
+  vars:
+    - jail_conf_file: jail.conf
+    - log_file_to_check: /var/log/apache2/vila-bojana.eu/access.log
+    - filter_name: wp_cron
+    - create: false
+    - test_it: false
+    
 ...
